@@ -14,6 +14,7 @@ import {
 import { useSync } from "@/hooks/useSync";
 import { Key, Clock, Info, Sparkles, RefreshCw, ChevronDown, Github, Loader2, LogIn } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DataManager } from "@/components/DataManager";
 
 type SettingsTab = "account" | "ai" | "sync" | "about";
 
@@ -501,6 +502,11 @@ function SyncTab() {
           <p>点击左侧边栏的「同步 Stars」按钮即可拉取最新的 GitHub Star 仓库数据。</p>
           <p className="mt-1">同步会自动获取所有已 Star 的仓库信息，包括描述、语言、Star 数等。</p>
         </div>
+      </div>
+
+      {/* 数据导入导出 */}
+      <div className="p-4 border border-border rounded-lg">
+        <DataManager />
       </div>
     </div>
   );
