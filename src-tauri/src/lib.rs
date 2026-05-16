@@ -56,6 +56,9 @@ pub fn run() {
             commands::stats::get_tag_distribution,
             commands::stats::get_stars_histogram,
             commands::stats::get_monthly_starred,
+            commands::readme::fetch_repo_readme,
+            commands::data::export_data,
+            commands::data::import_data,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

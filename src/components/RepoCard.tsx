@@ -1,9 +1,10 @@
 import { Repo, Tag, createTag, addTagToRepo, removeTagFromRepo } from "@/lib/commands";
-import { cn, formatNumber, timeAgo } from "@/lib/utils";
-import { Star, ExternalLink, Tag as TagIcon, Plus, Sparkles, X, StickyNote } from "lucide-react";
+import { cn, formatNumber, timeAgo, buildTagTree, flattenTagTree } from "@/lib/utils";
+import { Star, ExternalLink, Tag as TagIcon, Plus, Sparkles, X, StickyNote, BookOpen } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { AiSummary } from "@/components/AiSummary";
 import { NoteEditor } from "@/components/NoteEditor";
+import { ReadmePreview } from "@/components/ReadmePreview";
 
 const QUICK_COLORS = [
   "#6366f1", "#8b5cf6", "#ec4899", "#ef4444", "#f97316",
@@ -20,6 +21,7 @@ interface RepoCardProps {
 export function RepoCard({ repo, allTags, onToggleTag, onRefresh }: RepoCardProps) {
   const [showTagMenu, setShowTagMenu] = useState(false);
   const [showAiSummary, setShowAiSummary] = useState(false);
+  const [showReadme, setShowReadme] = useState(false);
   const [showNote, setShowNote] = useState(false);
   const [newTagName, setNewTagName] = useState("");
   const [creating, setCreating] = useState(false);
@@ -119,6 +121,13 @@ export function RepoCard({ repo, allTags, onToggleTag, onRefresh }: RepoCardProp
               <StickyNote className="w-3.5 h-3.5" />
             </button>
             <button
+              onClick={() => setShowReadme(true)}
+              className="p-1 rounded text-xs text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-all"
+              title="查看 README"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+            </button>
+            <button
               onClick={() => setShowAiSummary(true)}
               className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs text-purple-500 hover:text-purple-600 hover:bg-purple-500/10 opacity-0 group-hover:opacity-100 transition-all"
               title="AI 项目分析"
@@ -152,7 +161,9 @@ export function RepoCard({ repo, allTags, onToggleTag, onRefresh }: RepoCardProp
                 {repo.language}
               </span>
             )}
-            {repo.tags.map((tag) => (
+            {repo.tags.map((tag) => {
+              const tagDisplayName = tag.name.includes("/") ? tag.name.split("/").pop() : tag.name;
+              return (
               <span
                 key={tag.id}
                 className="group/tag inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs"
@@ -160,9 +171,10 @@ export function RepoCard({ repo, allTags, onToggleTag, onRefresh }: RepoCardProp
                   backgroundColor: tag.color + "20",
                   color: tag.color,
                 }}
+                title={tag.name}
               >
                 <TagIcon className="w-3 h-3" />
-                {tag.name}
+                {tagDisplayName}
                 <button
                   onClick={() => handleRemoveTag(tag.id)}
                   className="ml-0.5 rounded-full opacity-0 group-hover/tag:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 transition-opacity"
@@ -171,7 +183,8 @@ export function RepoCard({ repo, allTags, onToggleTag, onRefresh }: RepoCardProp
                   <X className="w-3 h-3" />
                 </button>
               </span>
-            ))}
+              );
+            })}
             {/* 添加标签按钮 */}
             <div className="relative">
               <button
@@ -181,25 +194,26 @@ export function RepoCard({ repo, allTags, onToggleTag, onRefresh }: RepoCardProp
                 <Plus className="w-3 h-3" />
               </button>
               {showTagMenu && (
-                <div className="absolute bottom-full left-0 mb-1 w-48 bg-card border border-border rounded-md shadow-lg z-10 py-1">
+                <div className="absolute bottom-full left-0 mb-1 w-52 bg-card border border-border rounded-md shadow-lg z-10 py-1">
                   {allTags.length > 0 && (
-                    <div className="max-h-36 overflow-y-auto">
-                      {allTags.map((tag) => {
+                    <div className="max-h-48 overflow-y-auto">
+                      {flattenTagTree(buildTagTree(allTags)).map(({ tag, depth, displayName }) => {
                         const hasTag = repo.tags.some((t) => t.id === tag.id);
                         return (
                           <button
                             key={tag.id}
                             onClick={() => handleToggleTag(tag.id)}
                             className={cn(
-                              "w-full flex items-center gap-2 px-3 py-1.5 text-xs hover:bg-accent transition-colors",
+                              "w-full flex items-center gap-2 py-1.5 text-xs hover:bg-accent transition-colors",
                               hasTag && "bg-accent"
                             )}
+                            style={{ paddingLeft: `${depth * 12 + 12}px`, paddingRight: '12px' }}
                           >
                             <TagIcon
-                              className="w-3 h-3"
+                              className="w-3 h-3 flex-shrink-0"
                               style={{ color: tag.color }}
                             />
-                            <span className="truncate">{tag.name}</span>
+                            <span className="truncate">{displayName}</span>
                             {hasTag && (
                               <span className="ml-auto text-primary">✓</span>
                             )}
@@ -265,6 +279,14 @@ export function RepoCard({ repo, allTags, onToggleTag, onRefresh }: RepoCardProp
         open={showAiSummary}
         onClose={() => setShowAiSummary(false)}
         onTagsApplied={onRefresh}
+      />
+
+      {/* README 预览弹窗 */}
+      <ReadmePreview
+        fullName={repo.full_name}
+        htmlUrl={repo.html_url}
+        open={showReadme}
+        onClose={() => setShowReadme(false)}
       />
     </>
   );

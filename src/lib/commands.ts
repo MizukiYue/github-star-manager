@@ -251,3 +251,44 @@ export async function getStarsHistogram(): Promise<StarsBucket[]> {
 export async function getMonthlyStarred(): Promise<MonthlyCount[]> {
   return invoke("get_monthly_starred");
 }
+
+// ===== README 预览 =====
+
+export async function fetchRepoReadme(fullName: string): Promise<string> {
+  return invoke("fetch_repo_readme", { fullName });
+}
+
+// ===== 数据导入导出 =====
+
+export interface ExportTag {
+  name: string;
+  color: string;
+}
+
+export interface ExportRepo {
+  github_id: number;
+  full_name: string;
+  tags: string[];
+  note: string | null;
+}
+
+export interface ExportData {
+  version: number;
+  exported_at: string;
+  tags: ExportTag[];
+  repos: ExportRepo[];
+}
+
+export interface ImportResult {
+  tags_imported: number;
+  notes_imported: number;
+  tags_linked: number;
+}
+
+export async function exportData(): Promise<ExportData> {
+  return invoke("export_data");
+}
+
+export async function importData(data: ExportData): Promise<ImportResult> {
+  return invoke("import_data", { data });
+}

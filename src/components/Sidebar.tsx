@@ -14,8 +14,67 @@ import {
   Code2,
   Tags,
   BarChart3,
+  ChevronRight,
 } from "lucide-react";
-import { cn, formatNumber } from "@/lib/utils";
+import { cn, formatNumber, buildTagTree, TagTreeNode } from "@/lib/utils";
+
+function TagTreeItem({
+  node,
+  selectedTagId,
+  onSelect,
+}: {
+  node: TagTreeNode;
+  selectedTagId: number | null;
+  onSelect: (id: number) => void;
+}) {
+  const [expanded, setExpanded] = useState(true);
+  const hasChildren = node.children.length > 0;
+
+  return (
+    <div>
+      <div className="flex items-center">
+        {hasChildren ? (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="p-0.5 rounded hover:bg-accent transition-colors"
+          >
+            <ChevronRight
+              className={cn(
+                "w-3 h-3 text-muted-foreground transition-transform",
+                expanded && "rotate-90"
+              )}
+            />
+          </button>
+        ) : (
+          <span className="w-4" />
+        )}
+        <button
+          onClick={() => onSelect(node.tag.id)}
+          className={cn(
+            "flex-1 flex items-center gap-2 px-2 py-1.5 rounded-md text-sm",
+            "hover:bg-accent transition-colors",
+            selectedTagId === node.tag.id && "bg-accent font-medium"
+          )}
+        >
+          <Tag className="w-3.5 h-3.5 flex-shrink-0" style={{ color: node.tag.color }} />
+          <span className="truncate">{node.displayName}</span>
+        </button>
+      </div>
+      {hasChildren && expanded && (
+        <div className="ml-3 border-l border-border/50 pl-1">
+          {node.children.map((child) => (
+            <TagTreeItem
+              key={child.tag.id}
+              node={child}
+              selectedTagId={selectedTagId}
+              onSelect={onSelect}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function Sidebar() {
   const [showTagManager, setShowTagManager] = useState(false);
@@ -135,29 +194,18 @@ export function Sidebar() {
             </div>
             {tags.length > 0 ? (
               <div className="space-y-0.5">
-                {tags.map((tag) => (
-                  <button
-                    key={tag.id}
-                    onClick={() => {
-                      setSelectedTagId(
-                        selectedTagId === tag.id ? null : tag.id
-                      );
+                {buildTagTree(tags).map((node) => (
+                  <TagTreeItem
+                    key={node.tag.id}
+                    node={node}
+                    selectedTagId={selectedTagId}
+                    onSelect={(id) => {
+                      setSelectedTagId(selectedTagId === id ? null : id);
                       setSelectedLanguage(null);
                       setShowSettings(false);
                       setShowDashboard(false);
                     }}
-                    className={cn(
-                      "w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-sm",
-                      "hover:bg-accent transition-colors",
-                      selectedTagId === tag.id && "bg-accent font-medium"
-                    )}
-                  >
-                    <Tag
-                      className="w-3.5 h-3.5"
-                      style={{ color: tag.color }}
-                    />
-                    <span className="truncate">{tag.name}</span>
-                  </button>
+                  />
                 ))}
               </div>
             ) : (

@@ -6,10 +6,13 @@
 
 - **同步 GitHub Stars** — 一键拉取所有已 Star 的仓库，存储到本地 SQLite 数据库
 - **自定义标签** — 为仓库添加自定义分类标签，支持颜色标识
+- **嵌套标签** — 支持 `前端/React`、`后端/Rust` 等层级分类，侧边栏树形展示，选择父标签自动包含子标签
 - **全文搜索** — 基于 SQLite FTS5 的全文搜索，支持仓库名、描述、语言等字段
 - **多维排序** — 按收藏时间、Stars 数量、更新时间排序，支持升序/降序切换
 - **AI 项目分析** — 读取仓库 README 和代码，生成结构化中文总结，自动建议标签
+- **README 预览** — 应用内直接渲染仓库 README，无需跳转 GitHub
 - **仓库笔记** — 为每个仓库添加个人备注，支持自动保存
+- **数据导入/导出** — JSON 格式备份标签和笔记，方便迁移和恢复
 - **统计面板** — 语言分布、标签分布、Stars 分布、月度收藏趋势可视化
 - **GitHub OAuth** — 支持 OAuth 登录或手动 Token 配置
 - **深色/浅色主题** — 一键切换
@@ -42,7 +45,7 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/RanceX2023/github-star-manager.git
+git clone https://github.com/MizukiYue/github-star-manager.git
 cd github-star-manager
 
 # 安装前端依赖
@@ -74,7 +77,7 @@ npm run tauri build
 │   └── lib/                # 工具函数和 Tauri 命令封装
 ├── src-tauri/              # Rust 后端
 │   └── src/
-│       ├── commands/       # Tauri 命令（repos, tags, sync, ai, oauth, notes, stats）
+│       ├── commands/       # Tauri 命令（repos, tags, sync, ai, oauth, notes, stats, readme, data）
 │       ├── db/             # SQLite 数据库初始化
 │       ├── github/         # GitHub API 客户端
 │       └── models/         # 数据模型

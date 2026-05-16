@@ -1,6 +1,8 @@
 pub mod ai;
+pub mod data;
 pub mod notes;
 pub mod oauth;
+pub mod readme;
 pub mod repos;
 pub mod settings;
 pub mod stats;

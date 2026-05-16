@@ -68,8 +68,35 @@ pub fn get_repos(state: State<DbState>, filter: RepoFilter) -> Result<Vec<Repo>,
 
     if let Some(tag_id) = filter.tag_id {
         sql.push_str(" INNER JOIN repo_tags rt ON r.id = rt.repo_id");
-        conditions.push("rt.tag_id = ?".to_string());
-        params.push(Box::new(tag_id));
+        // 查找选中标签的名称，用于匹配子标签（嵌套标签用 "/" 分隔）
+        let tag_name: Option<String> = conn
+            .query_row("SELECT name FROM tags WHERE id = ?1", [tag_id], |row| row.get(0))
+            .ok();
+        if let Some(name) = tag_name {
+            let child_prefix = format!("{}/", name);
+            let child_tag_ids: Vec<i64> = conn
+                .prepare("SELECT id FROM tags WHERE name = ?1 OR name LIKE ?2")
+                .map_err(|e| e.to_string())?
+                .query_map(rusqlite::params![name, format!("{}%", child_prefix)], |row| row.get(0))
+                .map_err(|e| e.to_string())?
+                .filter_map(|r| r.ok())
+                .collect();
+            if child_tag_ids.len() == 1 {
+                conditions.push("rt.tag_id = ?".to_string());
+                params.push(Box::new(tag_id));
+            } else {
+                let placeholders: Vec<String> = child_tag_ids.iter().enumerate().map(|(_, _)| "?".to_string()).collect();
+                conditions.push(format!("rt.tag_id IN ({})", placeholders.join(",")));
+                for id in child_tag_ids {
+                    params.push(Box::new(id));
+                }
+                // DISTINCT 避免同一仓库被多个子标签匹配时重复
+                sql = sql.replacen("SELECT r.id,", "SELECT DISTINCT r.id,", 1);
+            }
+        } else {
+            conditions.push("rt.tag_id = ?".to_string());
+            params.push(Box::new(tag_id));
+        }
     }
 
     if let Some(ref lang) = filter.language {
