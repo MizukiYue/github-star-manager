@@ -173,6 +173,189 @@
   opacity: 0.8;
 }
 
+/* README Markdown 渲染样式 */
+.readme-markdown h1,
+.readme-markdown h2,
+.readme-markdown h3,
+.readme-markdown h4,
+.readme-markdown h5,
+.readme-markdown h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  padding-bottom: 0.3em;
+}
+
+.readme-markdown h1 {
+  font-size: 1.75rem;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.readme-markdown h2 {
+  font-size: 1.4rem;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.readme-markdown h3 {
+  font-size: 1.15rem;
+}
+
+.readme-markdown h4 {
+  font-size: 1rem;
+}
+
+.readme-markdown > *:first-child {
+  margin-top: 0 !important;
+}
+
+.readme-markdown p {
+  margin-bottom: 1em;
+  line-height: 1.7;
+}
+
+.readme-markdown ul,
+.readme-markdown ol {
+  padding-left: 2em;
+  margin-bottom: 1em;
+}
+
+.readme-markdown ul {
+  list-style-type: disc;
+}
+
+.readme-markdown ol {
+  list-style-type: decimal;
+}
+
+.readme-markdown li {
+  margin-bottom: 0.35em;
+  line-height: 1.6;
+}
+
+.readme-markdown li > ul,
+.readme-markdown li > ol {
+  margin-top: 0.35em;
+  margin-bottom: 0;
+}
+
+.readme-markdown code {
+  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  font-size: 0.85em;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+
+.readme-markdown pre {
+  margin: 1em 0;
+  padding: 1em;
+  border-radius: 6px;
+  background: hsl(var(--muted));
+  overflow-x: auto;
+  border: 1px solid hsl(var(--border));
+}
+
+.readme-markdown pre code {
+  padding: 0;
+  background: transparent;
+  border: none;
+  font-size: 0.8em;
+  line-height: 1.6;
+}
+
+.readme-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  font-size: 0.875em;
+  display: block;
+  overflow-x: auto;
+}
+
+.readme-markdown thead {
+  background: hsl(var(--muted));
+}
+
+.readme-markdown th,
+.readme-markdown td {
+  border: 1px solid hsl(var(--border));
+  padding: 0.5em 0.75em;
+  text-align: left;
+}
+
+.readme-markdown th {
+  font-weight: 600;
+}
+
+.readme-markdown tr:nth-child(even) {
+  background: hsl(var(--muted) / 0.5);
+}
+
+.readme-markdown blockquote {
+  border-left: 4px solid hsl(var(--primary) / 0.5);
+  padding: 0.5em 1em;
+  margin: 1em 0;
+  color: hsl(var(--muted-foreground));
+  background: hsl(var(--muted) / 0.3);
+  border-radius: 0 4px 4px 0;
+}
+
+.readme-markdown blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.readme-markdown strong {
+  font-weight: 600;
+}
+
+.readme-markdown a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.readme-markdown a:hover {
+  opacity: 0.8;
+}
+
+.readme-markdown hr {
+  border: none;
+  border-top: 1px solid hsl(var(--border));
+  margin: 1.5em 0;
+}
+
+.readme-markdown img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.readme-markdown details {
+  margin: 1em 0;
+  padding: 0.5em 1em;
+  border: 1px solid hsl(var(--border));
+  border-radius: 6px;
+}
+
+.readme-markdown summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.readme-markdown kbd {
+  display: inline-block;
+  padding: 0.15em 0.4em;
+  font-size: 0.8em;
+  line-height: 1;
+  color: hsl(var(--foreground));
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 hsl(var(--border));
+}
+
 .ai-markdown hr {
   border: none;
   border-top: 1px solid hsl(var(--border));
