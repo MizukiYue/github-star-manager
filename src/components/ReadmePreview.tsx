@@ -12,6 +12,18 @@ interface ReadmePreviewProps {
   onClose: () => void;
 }
 
+function resolveGitHubUrl(src: string | undefined, fullName: string): string {
+  if (!src) return "";
+  if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("data:")) {
+    return src.replace(
+      /github\.com\/([^/]+\/[^/]+)\/blob\/([^/]+)\//,
+      "raw.githubusercontent.com/$1/$2/"
+    );
+  }
+  const cleaned = src.replace(/^\.\//, "");
+  return `https://raw.githubusercontent.com/${fullName}/HEAD/${cleaned}`;
+}
+
 export function ReadmePreview({ fullName, htmlUrl, open, onClose }: ReadmePreviewProps) {
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -77,7 +89,31 @@ export function ReadmePreview({ fullName, htmlUrl, open, onClose }: ReadmePrevie
 
           {content && !loading && (
             <div className="readme-markdown prose prose-sm dark:prose-invert max-w-none">
-              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
+                components={{
+                  img: ({ src, alt, ...props }) => (
+                    <img
+                      src={resolveGitHubUrl(src, fullName)}
+                      alt={alt || ""}
+                      loading="lazy"
+                      className="max-w-full h-auto"
+                      {...props}
+                    />
+                  ),
+                  a: ({ href, children, ...props }) => (
+                    <a
+                      href={href?.startsWith("http") ? href : `https://github.com/${fullName}/blob/HEAD/${href?.replace(/^\.\//, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      {...props}
+                    >
+                      {children}
+                    </a>
+                  ),
+                }}
+              >
                 {content}
               </ReactMarkdown>
             </div>
