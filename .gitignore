@@ -6,3 +6,4 @@ src-tauri/target/
 Thumbs.db
 .env
 .narrafork/
+.worktrees/
