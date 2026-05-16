@@ -591,8 +591,17 @@ function AboutTab() {
       </div>
 
       {/* 底部 */}
-      <div className="text-center text-xs text-muted-foreground pt-2">
+      <div className="text-center text-xs text-muted-foreground pt-2 space-y-2">
         <p>Built with Tauri + React + Rust</p>
+        <a
+          href="https://github.com/MizukiYue/github-star-manager"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-primary hover:underline"
+        >
+          <Github className="w-3.5 h-3.5" />
+          GitHub 仓库
+        </a>
       </div>
     </div>
   );

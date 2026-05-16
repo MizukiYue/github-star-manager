@@ -3,6 +3,7 @@ import { fetchRepoReadme } from "@/lib/commands";
 import { BookOpen, X, Loader2, ExternalLink } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 interface ReadmePreviewProps {
   fullName: string;
@@ -76,7 +77,7 @@ export function ReadmePreview({ fullName, htmlUrl, open, onClose }: ReadmePrevie
 
           {content && !loading && (
             <div className="readme-markdown prose prose-sm dark:prose-invert max-w-none">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                 {content}
               </ReactMarkdown>
             </div>
